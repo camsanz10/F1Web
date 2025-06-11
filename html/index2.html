@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórmula Uno</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <nav>
+            <a href="user.html" class="user-btn" id="userGreeting">Hola, usuario</a>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="pilotos.html">Pilotos</a></li>
+                <li><a href="circuitos.html">Circuitos</a></li>
+                <li><a href="favoritos.html">Favoritos</a></li>
+            </ul>
+        </nav>
+        <form action="main.html" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="Buscar...">
+            <button type="submit">🔍</button>
+        </form>
+    </header>
+    
+    <main class="hero-section">
+        <div class="hero-content">
+            <h1>Revive la emoción de cada temporada de Fórmula 1</h1>
+            <p>Explora temporadas, carreras icónicas y estadísticas detalladas sobre pilotos y equipos. Crea tu lista de favoritos, todo en una plataforma elegante y pensada para los fanáticos.</p>
+            <button class="learn-more">Aprender más</button>
+        </div>
+        <div class="hero-image">
+            <img src="../img/pilots.png" alt="F1 Drivers">
+        </div>
+    </main>
+    
+    <section class="team-logos">
+        <img src="../img/ferrari.png" alt="Ferrari">
+        <img src="../img/redbull.png" alt="Red Bull">
+        <img src="../img/mercedes.png" alt="Mercedes">
+        <img src="../img/astonmartin.png" alt="Aston Martin">
+        <img src="../img/alpine.png" alt="Alpine">
+        <img src="../img/haas.png" alt="Haas">
+        <img src="../img/mclaren.png" alt="McLaren">
+        <img src="../img/stake.png" alt="Stake F1 Team">
+        <img src="../img/racingbulls.png" alt="Racing Bulls">
+        <img src="../img/williams.png" alt="williams">
+    </section>
+
+    <section class="about-us">
+        <h2>Quién Soy</h2>
+        <div class="team">
+            <div class="member">
+                <img src="../img/mefoto.jpeg" alt="Miembro 1">
+                <h3>Camila Sánchez</h3>
+                <p>"Diseñadora gráfica y estudiante de Diseño de Medios Interactivos en la Universidad Icesi. Apasionada por la Fórmula 1 y el diseño digital, he creado esta plataforma para brindar una experiencia visual y funcional que facilite la exploración de temporadas, carreras, pilotos y equipos. Mi enfoque combina diseño intuitivo, usabilidad y tecnología para ofrecer una navegación fluida y atractiva para todos los aficionados al automovilismo."</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="carousel">
+        <h2>Media</h2>
+        <div class="carousel-container">
+            <img src="../img/imagen1.jpg" alt="Preview 1">
+            <img src="../img/imagen2.jpg" alt="Preview 2">
+            <img src="../img/imagen3.jpg" alt="Preview 3">
+            <img src="../img/imagen4.jpg" alt="Preview 4">
+            <img src="../img/imagen5.jpg" alt="Preview 5">
+            <img src="../img/imagen6.jpg" alt="Preview 6">
+            <img src="../img/imagen7.jpg" alt="Preview 7">
+        </div>
+    </section>
+
+    <section class="contact">
+        <h2>Contacto</h2>
+        <form>
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Mensaje:</label>
+            <textarea id="message" name="message" required></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="left">
+                <h3>FORMULA1.CO</h3>
+                <p>Desde carreras legendarias hasta estadísticas de pilotos, explora el mundo de la Fórmula 1 a tu manera, con tu pasión.</p>
+    </footer>
+
+    <script src="../js/users.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const usuario = obtenerUsuarioActual();
+
+        if (usuario) {
+            const saludo = document.getElementById("userGreeting");
+            saludo.textContent = `Hola, ${usuario.nombre.split(" ")[0]}`;
+        }
+    });
+</script>
+
+</body>
+</html>
