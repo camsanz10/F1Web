@@ -22,21 +22,7 @@
 
     <main>
         <section class="search">
-            <input type="search" id="searchInput" list="pilotos" placeholder="Buscar pilotos...">
-            <datalist id="pilotos">
-                <option value="Lewis Hamilton">
-                <option value="Max Verstappen">
-                <option value="Charles Leclerc">
-                <option value="Fernando Alonso">
-                <option value="Checo Pérez">
-                <option value="George Russell">
-                <option value="Carlos Sainz">
-                <option value="Alex Albon">
-                <option value="Lando Norris">
-                <option value="Yuki Tsunoda">
-                <option value="Valtteri Bottas">
-                <option value="Oscar Piastri">
-            </datalist>
+            <input type="text" id="searchInput" placeholder="Buscar pilotos por nombre..." />
         </section>
 
         <section class="elements">
@@ -57,16 +43,15 @@
     <script src="../js/pilotos.js"></script>
     <script src="../js/users.js"></script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const usuario = obtenerUsuarioActual();
-
-        if (usuario) {
-            const saludo = document.getElementById("userGreeting");
-            saludo.textContent = `Hola, ${usuario.nombre.split(" ")[0]}`;
-        }
-    });
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const usuario = JSON.parse(localStorage.getItem("usuarioLogueado"));
+            if (usuario) {
+                const saludo = document.getElementById("userGreeting");
+                saludo.textContent = `Hola, ${usuario.nombre.split(" ")[0]}`;
+            }
+        });
+    </script>
 
 </body>
 </html>

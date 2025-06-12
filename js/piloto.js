@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             pilotName.textContent = piloto.nombre;
-
             const nombreArchivo = imagenesPilotos[driverId] || "default.png";
             pilotImg.src = `../img/${nombreArchivo}`;
             pilotImg.alt = piloto.nombre;
@@ -60,6 +59,52 @@ document.addEventListener("DOMContentLoaded", () => {
             pilotVictorias.textContent = `Victorias: ${piloto.victorias}`;
             pilotPodios.textContent = `Podios: ${piloto.podios}`;
             pilotDebut.textContent = `Debut en F1: ${piloto.debut}`;
+
+            const botonFavorito = document.querySelector(".add-to-favorites");
+            const usuario = JSON.parse(localStorage.getItem("usuarioLogueado"));
+            const favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
+            const imagen = `../img/${nombreArchivo}`;
+
+            if (usuario) {
+                if (!favoritos[usuario.nombre]) {
+                    favoritos[usuario.nombre] = { pilotos: [], circuitos: [] };
+                }
+
+                const yaExiste = favoritos[usuario.nombre].pilotos.some(p => p.id === driverId);
+                if (yaExiste) {
+                    botonFavorito.textContent = "✅ En Favoritos";
+                    botonFavorito.disabled = true;
+                }
+
+                botonFavorito.addEventListener("click", () => {
+                    if (!usuario) {
+                        alert("Debes iniciar sesión para agregar favoritos.");
+                        return;
+                    }
+
+                    const yaExisteAhora = favoritos[usuario.nombre].pilotos.some(p => p.id === driverId);
+                    if (yaExisteAhora) {
+                        alert("Este piloto ya está en tus favoritos.");
+                        return;
+                    }
+
+                    favoritos[usuario.nombre].pilotos.push({
+                        id: driverId,
+                        nombre: piloto.nombre,
+                        imagen
+                    });
+
+                    localStorage.setItem("favoritos", JSON.stringify(favoritos));
+                    alert("Piloto agregado a favoritos.");
+
+                    botonFavorito.textContent = "✅ En Favoritos";
+                    botonFavorito.disabled = true;
+                });
+            } else {
+                botonFavorito.addEventListener("click", () => {
+                    alert("Debes iniciar sesión para agregar favoritos.");
+                });
+            }
         })
         .catch(error => {
             console.error("Error al cargar los datos del piloto:", error);

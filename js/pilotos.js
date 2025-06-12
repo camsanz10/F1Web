@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const grid = document.querySelector(".grid");
+    const searchInput = document.getElementById("searchInput");
 
     function obtenerUsuarioActual() {
         return JSON.parse(localStorage.getItem("usuarioLogueado"));
@@ -32,10 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
         "kevin_magnussen": "magnussen.png"
     };
 
-    fetch("https://my-json-server.typicode.com/camsanz10/f1-fakeapi/drivers-details")
-    .then(response => response.json())
-    .then(drivers => {
-        drivers.forEach(driver => {
+    let todosLosPilotos = [];
+
+    function renderizarPilotos(pilotos) {
+        grid.innerHTML = "";
+        pilotos.forEach(driver => {
             const fullName = driver.nombre;
             const nationality = driver.nacionalidad;
             const driverId = driver.id;
@@ -60,45 +62,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
             grid.appendChild(item);
         });
+    }
 
-            grid.addEventListener("click", (e) => {
-                if (e.target.classList.contains("favorite-btn")) {
-                    e.preventDefault();
-
-                    const usuario = obtenerUsuarioActual();
-                    if (!usuario) {
-                        alert("Debes iniciar sesión para agregar favoritos.");
-                        return;
-                    }
-
-                    const btn = e.target;
-                    const id = btn.dataset.id;
-                    const nombre = btn.dataset.nombre;
-                    const imagen = btn.dataset.imagen;
-
-                    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
-                    if (!favoritos[usuario.nombre]) {
-                        favoritos[usuario.nombre] = { pilotos: [], circuitos: [] };
-                    }
-
-                    const yaExiste = favoritos[usuario.nombre].pilotos.some(p => p.id === id);
-                    if (yaExiste) {
-                        alert("Este piloto ya está en tus favoritos.");
-                        return;
-                    }
-
-                    favoritos[usuario.nombre].pilotos.push({
-                        id,
-                        nombre,
-                        imagen
-                    });
-
-                    localStorage.setItem("favoritos", JSON.stringify(favoritos));
-                    alert("Piloto agregado a favoritos.");
-                }
-            });
+    fetch("https://my-json-server.typicode.com/camsanz10/f1-fakeapi/drivers-details")
+        .then(response => response.json())
+        .then(drivers => {
+            todosLosPilotos = drivers;
+            renderizarPilotos(todosLosPilotos);
         })
         .catch(error => {
             console.error("Error al cargar los datos de los pilotos:", error);
         });
+
+    grid.addEventListener("click", (e) => {
+        if (e.target.classList.contains("favorite-btn")) {
+            e.preventDefault();
+
+            const usuario = obtenerUsuarioActual();
+            if (!usuario) {
+                alert("Debes iniciar sesión para agregar favoritos.");
+                return;
+            }
+
+            const btn = e.target;
+            const id = btn.dataset.id;
+            const nombre = btn.dataset.nombre;
+            const imagen = btn.dataset.imagen;
+
+            const favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
+            if (!favoritos[usuario.nombre]) {
+                favoritos[usuario.nombre] = { pilotos: [], circuitos: [] };
+            }
+
+            const yaExiste = favoritos[usuario.nombre].pilotos.some(p => p.id === id);
+            if (yaExiste) {
+                alert("Este piloto ya está en tus favoritos.");
+                return;
+            }
+
+            favoritos[usuario.nombre].pilotos.push({
+                id,
+                nombre,
+                imagen
+            });
+
+            localStorage.setItem("favoritos", JSON.stringify(favoritos));
+            alert("Piloto agregado a favoritos.");
+        }
+    });
+
+    searchInput.addEventListener("input", () => {
+        const texto = searchInput.value.toLowerCase();
+        const filtrados = todosLosPilotos.filter(piloto =>
+            piloto.nombre.toLowerCase().includes(texto)
+        );
+        renderizarPilotos(filtrados);
+    });
 });

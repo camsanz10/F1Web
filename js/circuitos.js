@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const grid = document.getElementById("circuitosGrid");
+    const searchInput = document.getElementById("searchInput");
 
     const imagenesCircuitos = {
         "bahrain": "bahrain.png",
@@ -28,61 +29,83 @@ document.addEventListener("DOMContentLoaded", () => {
         "yas_marina": "yasmarina.png"
     };
 
+    let todosLosCircuitos = [];
+
+    function obtenerUsuarioActual() {
+        return JSON.parse(localStorage.getItem("usuarioLogueado"));
+    }
+
+    function renderizarCircuitos(lista) {
+        grid.innerHTML = "";
+
+        lista.forEach(circuito => {
+            const imagenArchivo = imagenesCircuitos[circuito.id] || "default-circuit.png";
+
+            const item = document.createElement("a");
+            item.classList.add("item");
+            item.href = `circuito.html?id=${circuito.id}`;
+            item.innerHTML = `
+                <img src="../img/circuitos/${imagenArchivo}" alt="${circuito.nombre}" class="circuit-image">
+                <h3>${circuito.nombre}</h3>
+                <button class="favorite-btn" data-id="${circuito.id}" data-nombre="${circuito.nombre}" data-imagen="${imagenArchivo}">⭐ Agregar a Favoritos</button>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
     fetch("https://my-json-server.typicode.com/camsanz10/fakeapi/circuitos")
         .then(response => response.json())
         .then(circuitos => {
-            circuitos.forEach(circuito => {
-                const imagenArchivo = imagenesCircuitos[circuito.id] || "default-circuit.png";
-
-                const item = document.createElement("a");
-                item.classList.add("item");
-                item.href = `circuito.html?id=${circuito.id}`;
-                item.innerHTML = `
-                    <img src="../img/circuitos/${imagenArchivo}" alt="${circuito.nombre}" class="circuit-image">
-                    <h3>${circuito.nombre}</h3>
-                    <button class="favorite-btn" data-id="${circuito.id}" data-nombre="${circuito.nombre}" data-imagen="${imagenArchivo}">⭐ Agregar a Favoritos</button>
-                `;
-                grid.appendChild(item);
-            });
-
-            // Lógica de favoritos
-            grid.addEventListener("click", (e) => {
-                if (e.target.classList.contains("favorite-btn")) {
-                    e.preventDefault();
-
-                    const usuario = obtenerUsuarioActual();
-                    if (!usuario) {
-                        alert("Debes iniciar sesión para agregar favoritos.");
-                        return;
-                    }
-
-                    const btn = e.target;
-                    const id = btn.dataset.id;
-                    const nombre = btn.dataset.nombre;
-                    const imagen = btn.dataset.imagen;
-
-                    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
-                    if (!favoritos[usuario.nombre]) {
-                        favoritos[usuario.nombre] = { pilotos: [], circuitos: [] };
-                    }
-
-                    const yaExiste = favoritos[usuario.nombre].circuitos.some(c => c.id === id);
-                    if (yaExiste) {
-                        alert("Este circuito ya está en tus favoritos.");
-                        return;
-                    }
-
-                    favoritos[usuario.nombre].circuitos.push({
-                        id,
-                        nombre,
-                        imagen: `../img/circuitos/${imagen}`
-                    });
-                    localStorage.setItem("favoritos", JSON.stringify(favoritos));
-                    alert("Circuito agregado a favoritos.");
-                }
-            });
+            todosLosCircuitos = circuitos;
+            renderizarCircuitos(circuitos);
         })
         .catch(error => {
             console.error("Error al cargar los circuitos:", error);
         });
+
+    grid.addEventListener("click", (e) => {
+        if (e.target.classList.contains("favorite-btn")) {
+            e.preventDefault();
+
+            const usuario = obtenerUsuarioActual();
+            if (!usuario) {
+                alert("Debes iniciar sesión para agregar favoritos.");
+                return;
+            }
+
+            const btn = e.target;
+            const id = btn.dataset.id;
+            const nombre = btn.dataset.nombre;
+            const imagen = btn.dataset.imagen;
+
+            const favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
+            if (!favoritos[usuario.nombre]) {
+                favoritos[usuario.nombre] = { pilotos: [], circuitos: [] };
+            }
+
+            const yaExiste = favoritos[usuario.nombre].circuitos.some(c => c.id === id);
+            if (yaExiste) {
+                alert("Este circuito ya está en tus favoritos.");
+                return;
+            }
+
+            favoritos[usuario.nombre].circuitos.push({
+                id,
+                nombre,
+                imagen: `../img/circuitos/${imagen}`
+            });
+            localStorage.setItem("favoritos", JSON.stringify(favoritos));
+            alert("Circuito agregado a favoritos.");
+        }
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const texto = searchInput.value.toLowerCase();
+            const filtrados = todosLosCircuitos.filter(circuito =>
+                circuito.nombre.toLowerCase().includes(texto)
+            );
+            renderizarCircuitos(filtrados);
+        });
+    }
 });
